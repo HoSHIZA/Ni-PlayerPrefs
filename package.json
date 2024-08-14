@@ -1,0 +1,21 @@
+﻿{
+    "name": "com.ni-games.ni_prefs",
+    "version": "1.0.0",
+    "displayName": "Ni Prefs",
+    "description": "A powerful wrapper for Unity PlayerPrefs, providing improved access to stored data.",
+    "unity": "2019.3",
+    "documentationUrl": "",
+    "dependencies": {},
+    "optionalDependencies": {},
+    "keywords": [
+        "NiGames",
+        "NiPrefs",
+        "PlayerPrefs",
+        "Player Preferences"
+    ],
+    "author": {
+        "name": "HoSHIZA",
+        "email": "hoshiza78@gmail.com",
+        "url": "https://github.com/HoSHIZA"
+    }
+}
