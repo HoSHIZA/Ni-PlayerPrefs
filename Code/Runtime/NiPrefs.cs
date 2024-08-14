@@ -25,6 +25,17 @@ namespace NiGames.PlayerPrefs
         }
         
         /// <summary>
+        /// Adds a new provider for a specific type to the list of available PlayerPrefs providers.
+        /// </summary>
+        public static void RegisterProvider<TKey, T>()
+            where T : IPlayerPrefsProvider<TKey>
+        {
+            if (_providers.ContainsKey(typeof(TKey))) return;
+            
+            _providers.Add(typeof(TKey), Activator.CreateInstance<T>());
+        }
+        
+        /// <summary>
         /// Returns the value corresponding to key in the preference file if it exists.
         /// Uses one of the available providers.
         /// Returns an error if no provider is found.
@@ -38,7 +49,7 @@ namespace NiGames.PlayerPrefs
         {
             if (!_providers.ContainsKey(typeof(T)))
             {
-                throw new ArgumentException($"[NiPrefs] Provider with type `{typeof(T)}` is not registered.");
+                throw new Exception($"[NiPrefs] Provider with type `{typeof(T)}` is not registered.");
             }
             
             if (_providers[typeof(T)] is IPlayerPrefsProvider<T> provider)
@@ -58,11 +69,14 @@ namespace NiGames.PlayerPrefs
         /// To write objects for which there is no <see cref="IPlayerPrefsProvider{T}"/>,
         /// use <see cref="GetObject{T}"/> or some other way of reading.
         /// </remarks>
-        public static void Set<T>(string key, T value)
+        public static void Set<T>(string key, T value, bool throwIdProviderNotFound = true)
         {
             if (!_providers.ContainsKey(typeof(T)))
             {
-                throw new ArgumentException($"[NiPrefs] Provider with type `{typeof(T)}` is not registered.");
+                if (throwIdProviderNotFound)
+                {
+                    throw new Exception($"[NiPrefs] Provider with type `{typeof(T)}` is not registered.");
+                }
             }
             
             if (_providers[typeof(T)] is IPlayerPrefsProvider<T> provider)

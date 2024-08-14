@@ -47,6 +47,11 @@ namespace NiGames.PlayerPrefs
                 var pref = UnityEngine.PlayerPrefs.GetString(key, null);
                 
                 if (pref == null) return defaultValue;
+
+                if (!pref.StartsWith('#'))
+                {
+                    pref = pref.Insert(0, "#");
+                }
                 
                 return ColorUtility.TryParseHtmlString(pref, out var color) 
                     ? color 
@@ -59,7 +64,7 @@ namespace NiGames.PlayerPrefs
                     ? ColorUtility.ToHtmlStringRGBA(value) 
                     : ColorUtility.ToHtmlStringRGB(value);
     
-                UnityEngine.PlayerPrefs.SetString(key, hex);
+                UnityEngine.PlayerPrefs.SetString(key, $"#{hex}");
             }
         }
         
@@ -77,6 +82,11 @@ namespace NiGames.PlayerPrefs
                 var pref = UnityEngine.PlayerPrefs.GetString(key, null);
                 
                 if (pref == null) return defaultValue;
+
+                if (!pref.StartsWith('#'))
+                {
+                    pref = pref.Insert(0, "#");
+                }
                 
                 return ColorUtility.TryParseHtmlString(pref, out var color) 
                     ? color 
@@ -89,7 +99,7 @@ namespace NiGames.PlayerPrefs
                     ? ColorUtility.ToHtmlStringRGBA(value) 
                     : ColorUtility.ToHtmlStringRGB(value);
                 
-                UnityEngine.PlayerPrefs.SetString(key, hex);
+                UnityEngine.PlayerPrefs.SetString(key, $"#{hex}");
             }
         }
     }
