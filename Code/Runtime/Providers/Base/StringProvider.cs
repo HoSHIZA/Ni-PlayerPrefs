@@ -12,22 +12,22 @@ namespace NiGames.PlayerPrefs
         /// <summary>
         /// Sets the value of <see cref="string"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
-        public static void Set(string key, string value) => default(StringPlayerPrefsProvider).Get(key, value);
+        public static void Set(string key, string value) => default(StringPlayerPrefsProvider).Set(key, value);
     }
-}
-
-namespace NiGames.PlayerPrefs.Providers
-{
-    internal readonly struct StringPlayerPrefsProvider : IPlayerPrefsProvider<string>
+    
+    namespace Providers
     {
-        public string Get(string key, string defaultValue = default)
+        internal readonly struct StringPlayerPrefsProvider : IPlayerPrefsProvider<string>
         {
-            return UnityEngine.PlayerPrefs.GetString(key, defaultValue);
-        }
+            public string Get(string key, string defaultValue = default)
+            {
+                return UnityEngine.PlayerPrefs.GetString(key, defaultValue);
+            }
         
-        public void Set(string key, string value)
-        {
-            UnityEngine.PlayerPrefs.SetString(key, value);
+            public void Set(string key, string value)
+            {
+                UnityEngine.PlayerPrefs.SetString(key, value);
+            }
         }
     }
 }

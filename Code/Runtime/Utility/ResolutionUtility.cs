@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace NiGames.PlayerPrefs.Utility
 {
-    public static class ResolutionUtility
+    internal static class ResolutionUtility
     {
         private const int MAX_DENOMINATOR = 1000000;
         

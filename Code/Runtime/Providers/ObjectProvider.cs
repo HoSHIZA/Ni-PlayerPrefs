@@ -22,37 +22,37 @@ namespace NiGames.PlayerPrefs
         public static void SetObject<T>(string key, T value) where T : class, new()
             => ObjectPlayerPrefsProvider.Set(key, value);
     }
-}
-
-namespace NiGames.PlayerPrefs.Providers
-{
-    public readonly struct ObjectPlayerPrefsProvider : IPlayerPrefsProvider
+    
+    namespace Providers
     {
-        public static T Get<T>(string key, T defaultValue = default)
-            where T : class, new()
+        public readonly struct ObjectPlayerPrefsProvider : IPlayerPrefsProvider
         {
-            var value = UnityEngine.PlayerPrefs.GetString(key);
-
-            if (string.IsNullOrEmpty(value))
+            public static T Get<T>(string key, T defaultValue = default)
+                where T : class, new()
             {
-                return defaultValue;
-            }
-            
-            var formatter = new BinaryFormatter();
-            var data = Convert.FromBase64String(value);
-            var stream = new MemoryStream(data);
-            
-            return (T)formatter.Deserialize(stream);
-        }
+                var value = UnityEngine.PlayerPrefs.GetString(key);
 
-        public static void Set<T>(string key, T value)
-            where T : class, new()
-        {
-            var formatter = new BinaryFormatter();
-            var stream = new MemoryStream();
+                if (string.IsNullOrEmpty(value))
+                {
+                    return defaultValue;
+                }
             
-            formatter.Serialize(stream, value);
-            UnityEngine.PlayerPrefs.SetString(key, Convert.ToBase64String(stream.ToArray()));
+                var formatter = new BinaryFormatter();
+                var data = Convert.FromBase64String(value);
+                var stream = new MemoryStream(data);
+            
+                return (T)formatter.Deserialize(stream);
+            }
+
+            public static void Set<T>(string key, T value)
+                where T : class, new()
+            {
+                var formatter = new BinaryFormatter();
+                var stream = new MemoryStream();
+            
+                formatter.Serialize(stream, value);
+                UnityEngine.PlayerPrefs.SetString(key, Convert.ToBase64String(stream.ToArray()));
+            }
         }
     }
 }

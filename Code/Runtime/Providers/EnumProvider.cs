@@ -22,52 +22,52 @@ namespace NiGames.PlayerPrefs
         public static void SetEnum<T>(string key, T value) where T : Enum 
             => EnumPlayerPrefsProvider.Set(key, value);
     }
-}
-
-namespace NiGames.PlayerPrefs.Providers
-{
-    internal readonly struct EnumPlayerPrefsProvider : IPlayerPrefsProvider
+    
+    namespace Providers
     {
-        public static readonly Regex Regex = new Regex(
-            pattern: @"^([a-zA-Z]{1}[\w0-9]*)\s+([\w0-9]+)$", 
-            options: RegexOptions.Compiled);
-        
-        public static void Set<T>(string key, T value)
-            where T : Enum
+        internal readonly struct EnumPlayerPrefsProvider : IPlayerPrefsProvider
         {
-            UnityEngine.PlayerPrefs.SetString(key, $"{value.GetType().Name} {value.ToString()}");
-        }
+            public static readonly Regex Regex = new Regex(
+                pattern: @"^([a-zA-Z]{1}[\w0-9]*)\s+([\w0-9]+)$", 
+                options: RegexOptions.Compiled);
         
-        public static T Get<T>(string key, T defaultValue = default)
-            where T : Enum
-        {
-            var input = UnityEngine.PlayerPrefs.GetString(key, defaultValue != null 
-                ? $"{defaultValue.GetType().Name} {defaultValue.ToString()}"
-                : null);
-            
-            if (input == null) return default;
-            
-            var match = Regex.Match(input);
-            
-            if (!match.Success)
+            public static void Set<T>(string key, T value)
+                where T : Enum
             {
-                if (NiPrefs.EnableLogging)
-                {
-                    Debug.LogWarning($"[NiPrefs] PlayerPrefs <color=yellow>\"{key}\"</color> value is incorrect <color=red>\"{input}\"</color>");
-                }
-                return default;
+                UnityEngine.PlayerPrefs.SetString(key, $"{value.GetType().Name} {value.ToString()}");
             }
-            
-            if (typeof(T).Name != match.Groups[1].Value)
+        
+            public static T Get<T>(string key, T defaultValue = default)
+                where T : Enum
             {
-                if (NiPrefs.EnableLogging)
-                {
-                    Debug.LogError($"[NiPrefs] PlayerPrefs <color=yellow>\"{key}\"</color> contains another Enum Type ({typeof(T).Name} => {match.Groups[1].Value})");
-                }
-                return default;
-            }
+                var input = UnityEngine.PlayerPrefs.GetString(key, defaultValue != null 
+                    ? $"{defaultValue.GetType().Name} {defaultValue.ToString()}"
+                    : null);
             
-            return (T) Enum.Parse(typeof(T), match.Groups[2].Value, true);
+                if (input == null) return default;
+            
+                var match = Regex.Match(input);
+            
+                if (!match.Success)
+                {
+                    if (NiPrefs.EnableLogging)
+                    {
+                        Debug.LogWarning($"[NiPrefs] PlayerPrefs <color=yellow>\"{key}\"</color> value is incorrect <color=red>\"{input}\"</color>");
+                    }
+                    return default;
+                }
+            
+                if (typeof(T).Name != match.Groups[1].Value)
+                {
+                    if (NiPrefs.EnableLogging)
+                    {
+                        Debug.LogError($"[NiPrefs] PlayerPrefs <color=yellow>\"{key}\"</color> contains another Enum Type ({typeof(T).Name} => {match.Groups[1].Value})");
+                    }
+                    return default;
+                }
+            
+                return (T) Enum.Parse(typeof(T), match.Groups[2].Value, true);
+            }
         }
     }
 }
