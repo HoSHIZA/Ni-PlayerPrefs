@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace NiGames.PlayerPrefs
 {
@@ -10,9 +11,26 @@ namespace NiGames.PlayerPrefs
     [PublicAPI]
     public static partial class NiPrefs
     {
-        public static bool EnableLogging = true;
+        private static bool _init;
+        private static readonly Dictionary<Type, IPlayerPrefsProvider> _providers = new Dictionary<Type, IPlayerPrefsProvider>(16);
         
-        private static readonly Dictionary<Type, IPlayerPrefsProvider> _providers = new Dictionary<Type, IPlayerPrefsProvider>(12);
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        private static void Init()
+        {
+#if UNITY_EDITOR
+            var domainReloadDisabled =
+                UnityEditor.EditorSettings.enterPlayModeOptionsEnabled &&
+                (UnityEditor.EditorSettings.enterPlayModeOptions & UnityEditor.EnterPlayModeOptions.DisableDomainReload) != 0;
+
+            if (_init && !domainReloadDisabled) return;
+#else
+            if (_init) return;
+#endif
+
+            Register();
+            
+            _init = true;
+        }
         
         /// <summary>
         /// Adds a new provider for a specific type to the list of available PlayerPrefs providers.
@@ -36,52 +54,70 @@ namespace NiGames.PlayerPrefs
         }
         
         /// <summary>
-        /// Returns the value corresponding to key in the preference file if it exists.
-        /// Uses one of the available providers.
+        /// Returns the value corresponding to the PlayerPrefs key, using the appropriate provider.
         /// Returns an error if no provider is found.
         /// </summary>
         /// <remarks>
-        /// Use <see cref="SetEnum{T}"/> to write <c>Enum</c>.
-        /// To write objects for which there is no <see cref="IPlayerPrefsProvider{T}"/>,
-        /// use <see cref="SetObject{T}"/> or some other way of writing.
+        /// Use <see cref="GetEnum{T}"/> to read <c>Enum</c>.
         /// </remarks>
-        public static T Get<T>(string key, T defaultValue = default)
+        public static T Get<T>(string key, T defaultValue = default, 
+            PlayerPrefsEncryption encryption = PlayerPrefsEncryption.UseEncryptionSettings, 
+            PlayerPrefsFallback fallback = PlayerPrefsFallback.Throw)
         {
             if (!_providers.ContainsKey(typeof(T)))
             {
-                throw new Exception($"[NiPrefs] Provider with type `{typeof(T)}` is not registered.");
+                switch (fallback)
+                {
+                    case PlayerPrefsFallback.Throw:
+                        throw new Exception($"[NiPrefs] Provider with type `{typeof(T)}` is not registered.");
+                    case PlayerPrefsFallback.Ignore:
+                        return defaultValue;
+                    case PlayerPrefsFallback.TryJson:
+                        return GetJson(key, defaultValue, encryption);
+                    case PlayerPrefsFallback.TryBinary:
+                        return GetBinary(key, defaultValue, encryption);
+                }
             }
             
             if (_providers[typeof(T)] is IPlayerPrefsProvider<T> provider)
             {
-                return provider.Get(key, defaultValue);
+                return provider.Get(key, defaultValue, encryption);
             }
             
             return defaultValue;
         }
         
         /// <summary>
-        /// Sets a value of type <c>T</c> for the preference identified by the given key.
-        /// You can use <see cref="Get{T}"/> to get this value
+        /// Sets the value corresponding to the PlayerPrefs key using the appropriate provider.
+        /// Returns an error if no provider is found.
         /// </summary>
         /// <remarks>
-        /// Use <see cref="GetEnum{T}"/> to read <c>Enum</c>.
-        /// To write objects for which there is no <see cref="IPlayerPrefsProvider{T}"/>,
-        /// use <see cref="GetObject{T}"/> or some other way of reading.
+        /// Use <see cref="SetEnum{T}"/> to write <c>Enum</c>.
         /// </remarks>
-        public static void Set<T>(string key, T value, bool throwIdProviderNotFound = true)
+        public static void Set<T>(string key, T value, 
+            PlayerPrefsEncryption encryption = PlayerPrefsEncryption.UseEncryptionSettings, 
+            PlayerPrefsFallback fallback = PlayerPrefsFallback.Throw)
         {
             if (!_providers.ContainsKey(typeof(T)))
             {
-                if (throwIdProviderNotFound)
+                switch (fallback)
                 {
-                    throw new Exception($"[NiPrefs] Provider with type `{typeof(T)}` is not registered.");
+                    case PlayerPrefsFallback.Throw:
+                        throw new Exception($"[NiPrefs] Provider with type `{typeof(T)}` is not registered.");
+                    case PlayerPrefsFallback.Ignore:
+                        return;
+                    case PlayerPrefsFallback.TryJson:
+                        SetJson(key, value, encryption);
+                        break;
+                    case PlayerPrefsFallback.TryBinary:
+                        SetBinary(key, value, encryption);
+                        break;
                 }
             }
             
             if (_providers[typeof(T)] is IPlayerPrefsProvider<T> provider)
             {
-                provider.Set(key, value);
+                provider.Set(key, value, encryption);
             }
         }
         

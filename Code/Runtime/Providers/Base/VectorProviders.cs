@@ -12,61 +12,71 @@ namespace NiGames.PlayerPrefs
         /// Returns the <see cref="Vector2"/> value stored in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static Vector2 GetVector2(string key, Vector2 defaultValue = default) => default(Vector2PlayerPrefsProvider).Get(key, defaultValue);
+        public static Vector2 GetVector2(string key, Vector2 defaultValue = default, PlayerPrefsEncryption encryption = default) 
+            => default(Vector2PlayerPrefsProvider).Get(key, defaultValue, encryption);
         
         /// <summary>
         /// Sets the value of <see cref="Vector2"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static void Set(string key, Vector2 value) => default(Vector2PlayerPrefsProvider).Set(key, value);
+        public static void Set(string key, Vector2 value, PlayerPrefsEncryption encryption = default) 
+            => default(Vector2PlayerPrefsProvider).Set(key, value, encryption);
         
         /// <summary>
         /// Returns the <see cref="Vector2Int"/> value stored in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static Vector2Int GetVector2Int(string key, Vector2Int defaultValue = default) => default(Vector2IntPlayerPrefsProvider).Get(key, defaultValue);
+        public static Vector2Int GetVector2Int(string key, Vector2Int defaultValue = default, PlayerPrefsEncryption encryption = default) 
+            => default(Vector2IntPlayerPrefsProvider).Get(key, defaultValue, encryption);
         
         /// <summary>
         /// Sets the value of <see cref="Vector2Int"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static void Set(string key, Vector2Int value) => default(Vector2IntPlayerPrefsProvider).Set(key, value);
+        public static void Set(string key, Vector2Int value, PlayerPrefsEncryption encryption = default)
+            => default(Vector2IntPlayerPrefsProvider).Set(key, value, encryption);
         
         /// <summary>
         /// Returns the <see cref="Vector3"/> value stored in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static Vector3 GetVector3(string key, Vector3 defaultValue = default) => default(Vector3PlayerPrefsProvider).Get(key, defaultValue);
+        public static Vector3 GetVector3(string key, Vector3 defaultValue = default, PlayerPrefsEncryption encryption = default) 
+            => default(Vector3PlayerPrefsProvider).Get(key, defaultValue, encryption);
         
         /// <summary>
         /// Sets the value of <see cref="Vector3"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static void Set(string key, Vector3 value) => default(Vector3PlayerPrefsProvider).Set(key, value);
+        public static void Set(string key, Vector3 value, PlayerPrefsEncryption encryption = default) 
+            => default(Vector3PlayerPrefsProvider).Set(key, value, encryption);
         
         /// <summary>
         /// Returns the <see cref="Vector3Int"/> value stored in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static Vector3Int GetVector3Int(string key, Vector3Int defaultValue = default) => default(Vector3IntPlayerPrefsProvider).Get(key, defaultValue);
+        public static Vector3Int GetVector3Int(string key, Vector3Int defaultValue = default, PlayerPrefsEncryption encryption = default) 
+            => default(Vector3IntPlayerPrefsProvider).Get(key, defaultValue, encryption);
         
         /// <summary>
         /// Sets the value of <see cref="Vector3Int"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static void Set(string key, Vector3Int value) => default(Vector3IntPlayerPrefsProvider).Set(key, value);
+        public static void Set(string key, Vector3Int value, PlayerPrefsEncryption encryption = default) 
+            => default(Vector3IntPlayerPrefsProvider).Set(key, value, encryption);
         
         /// <summary>
         /// Returns the <see cref="Vector4"/> value stored in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static Vector4 GetVector4(string key, Vector4 defaultValue = default) => default(Vector4PlayerPrefsProvider).Get(key, defaultValue);
+        public static Vector4 GetVector4(string key, Vector4 defaultValue = default, PlayerPrefsEncryption encryption = default) 
+            => default(Vector4PlayerPrefsProvider).Get(key, defaultValue, encryption);
         
         /// <summary>
         /// Sets the value of <see cref="Vector4"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static void Set(string key, Vector4 value) => default(Vector4PlayerPrefsProvider).Set(key, value);
+        public static void Set(string key, Vector4 value, PlayerPrefsEncryption encryption = default) 
+            => default(Vector4PlayerPrefsProvider).Set(key, value, encryption);
     }
     
     namespace Providers
@@ -77,23 +87,26 @@ namespace NiGames.PlayerPrefs
                 pattern: @"^\(([0-9]+(?:[.][0-9]+)?),\s?([0-9]+(?:[.][0-9]+)?)\)$", 
                 options: RegexOptions.Compiled);
             
-            public void Set(string key, Vector2 value)
+            public void Set(string key, Vector2 value, PlayerPrefsEncryption encryption = default)
             {
-                UnityEngine.PlayerPrefs.SetString(key, value.ToString("F3"));
+                NiPrefs.Internal.SetString(key, value.ToString("F3"), encryption);
             }
             
-            public Vector2 Get(string key, Vector2 defaultValue = default)
+            public Vector2 Get(string key, Vector2 defaultValue = default, PlayerPrefsEncryption encryption = default)
             {
-                var input = UnityEngine.PlayerPrefs.GetString(key, defaultValue.ToString("F3"));
+                var input = NiPrefs.Internal.GetString(key, null, encryption);
+                
+                if (input == null) return defaultValue;
+                
                 var match = Regex.Match(input);
                 
                 if (!match.Success)
                 {
-                    if (NiPrefs.EnableLogging)
+                    if (NiPrefs.Settings.EnableLogging)
                     {
                         Debug.LogWarning($"[NiPrefs] PlayerPrefs <color=yellow>\"{key}\"</color> value is incorrect <color=red>\"{input}\"</color>");
                     }
-                    return default;
+                    return defaultValue;
                 }
                 
                 return new Vector2(
@@ -108,23 +121,26 @@ namespace NiGames.PlayerPrefs
                 pattern: @"^\(([0-9]+),\s?([0-9]+)\)$", 
                 options: RegexOptions.Compiled);
             
-            public void Set(string key, Vector2Int value)
+            public void Set(string key, Vector2Int value, PlayerPrefsEncryption encryption = default)
             {
-                UnityEngine.PlayerPrefs.SetString(key, value.ToString("F3"));
+                NiPrefs.Internal.SetString(key, value.ToString("F3"), encryption);
             }
             
-            public Vector2Int Get(string key, Vector2Int defaultValue = default)
+            public Vector2Int Get(string key, Vector2Int defaultValue = default, PlayerPrefsEncryption encryption = default)
             {
-                var input = UnityEngine.PlayerPrefs.GetString(key, defaultValue.ToString());
+                var input = NiPrefs.Internal.GetString(key, null, encryption);
+                
+                if (input == null) return defaultValue;
+                
                 var match = Regex.Match(input);
                 
                 if (!match.Success)
                 {
-                    if (NiPrefs.EnableLogging)
+                    if (NiPrefs.Settings.EnableLogging)
                     {
                         Debug.LogWarning($"[NiPrefs] PlayerPrefs <color=yellow>\"{key}\"</color> value is incorrect <color=red>\"{input}\"</color>");
                     }
-                    return default;
+                    return defaultValue;
                 }
                 
                 return new Vector2Int(
@@ -139,23 +155,26 @@ namespace NiGames.PlayerPrefs
                 pattern: @"^\(([0-9]+(?>[.][0-9]+)?),\s?([0-9]+(?>[.][0-9]+)?),\s?([0-9]+(?>[.][0-9]+)?)\)$", 
                 options: RegexOptions.Compiled);
             
-            public void Set(string key, Vector3 value)
+            public void Set(string key, Vector3 value, PlayerPrefsEncryption encryption = default)
             {
-                UnityEngine.PlayerPrefs.SetString(key, value.ToString("F3"));
+                NiPrefs.Internal.SetString(key, value.ToString("F3"), encryption);
             }
             
-            public Vector3 Get(string key, Vector3 defaultValue = default)
+            public Vector3 Get(string key, Vector3 defaultValue = default, PlayerPrefsEncryption encryption = default)
             {
-                var input = UnityEngine.PlayerPrefs.GetString(key, defaultValue.ToString("F3"));
+                var input = NiPrefs.Internal.GetString(key, null, encryption);
+                
+                if (input == null) return defaultValue;
+                
                 var match = Regex.Match(input);
                 
                 if (!match.Success)
                 {
-                    if (NiPrefs.EnableLogging)
+                    if (NiPrefs.Settings.EnableLogging)
                     {
                         Debug.LogWarning($"[NiPrefs] PlayerPrefs <color=yellow>\"{key}\"</color> value is incorrect <color=red>\"{input}\"</color>");
                     }
-                    return default;
+                    return defaultValue;
                 }
                 
                 return new Vector3(
@@ -171,23 +190,26 @@ namespace NiGames.PlayerPrefs
                 pattern: @"^\(([0-9]+),\s?([0-9]+),\s?([0-9]+)\)$", 
                 options: RegexOptions.Compiled);
             
-            public void Set(string key, Vector3Int value)
+            public void Set(string key, Vector3Int value, PlayerPrefsEncryption encryption = default)
             {
-                UnityEngine.PlayerPrefs.SetString(key, value.ToString("F3"));
+                NiPrefs.Internal.SetString(key, value.ToString("F3"), encryption);
             }
             
-            public Vector3Int Get(string key, Vector3Int defaultValue = default)
+            public Vector3Int Get(string key, Vector3Int defaultValue = default, PlayerPrefsEncryption encryption = default)
             {
-                var input = UnityEngine.PlayerPrefs.GetString(key, defaultValue.ToString("F3"));
+                var input = NiPrefs.Internal.GetString(key, null, encryption);
+                
+                if (input == null) return defaultValue;
+                
                 var match = Regex.Match(input);
                 
                 if (!match.Success)
                 {
-                    if (NiPrefs.EnableLogging)
+                    if (NiPrefs.Settings.EnableLogging)
                     {
                         Debug.LogWarning($"[NiPrefs] PlayerPrefs <color=yellow>\"{key}\"</color> value is incorrect <color=red>\"{input}\"</color>");
                     }
-                    return default;
+                    return defaultValue;
                 }
                 
                 return new Vector3Int(
@@ -203,23 +225,26 @@ namespace NiGames.PlayerPrefs
                 pattern: @"^\(([0-9]+(?>[.][0-9]+)?),\s?([0-9]+(?>[.][0-9]+)?),\s?([0-9]+(?>[.][0-9]+)?),\s?([0-9]+(?>[.][0-9]+)?)\)$", 
                 options: RegexOptions.Compiled);
             
-            public void Set(string key, Vector4 value)
+            public void Set(string key, Vector4 value, PlayerPrefsEncryption encryption = default)
             {
-                UnityEngine.PlayerPrefs.SetString(key, value.ToString("F3"));
+                NiPrefs.Internal.SetString(key, value.ToString("F3"), encryption);
             }
             
-            public Vector4 Get(string key, Vector4 defaultValue = default)
+            public Vector4 Get(string key, Vector4 defaultValue = default, PlayerPrefsEncryption encryption = default)
             {
-                var input = UnityEngine.PlayerPrefs.GetString(key, defaultValue.ToString("F3"));
+                var input = NiPrefs.Internal.GetString(key, null, encryption);
+                
+                if (input == null) return defaultValue;
+                
                 var match = Regex.Match(input);
                 
                 if (!match.Success)
                 {
-                    if (NiPrefs.EnableLogging)
+                    if (NiPrefs.Settings.EnableLogging)
                     {
                         Debug.LogWarning($"[NiPrefs] PlayerPrefs <color=yellow>\"{key}\"</color> value is incorrect <color=red>\"{input}\"</color>");
                     }
-                    return default;
+                    return defaultValue;
                 }
                 
                 return new Vector4(

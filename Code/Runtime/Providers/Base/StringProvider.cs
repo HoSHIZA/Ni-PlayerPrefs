@@ -7,26 +7,28 @@ namespace NiGames.PlayerPrefs
         /// <summary>
         /// Returns the <see cref="string"/> value stored in <c>PlayerPrefs</c> by key.
         /// </summary>
-        public static string GetString(string key, string defaultValue = default) => default(StringPlayerPrefsProvider).Get(key, defaultValue);
+        public static string GetString(string key, string defaultValue = default, PlayerPrefsEncryption encryption = default) 
+            => default(StringPlayerPrefsProvider).Get(key, defaultValue, encryption);
         
         /// <summary>
         /// Sets the value of <see cref="string"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
-        public static void Set(string key, string value) => default(StringPlayerPrefsProvider).Set(key, value);
+        public static void Set(string key, string value, PlayerPrefsEncryption encryption = default) 
+            => default(StringPlayerPrefsProvider).Set(key, value, encryption);
     }
     
     namespace Providers
     {
         internal readonly struct StringPlayerPrefsProvider : IPlayerPrefsProvider<string>
         {
-            public string Get(string key, string defaultValue = default)
+            public string Get(string key, string defaultValue = default, PlayerPrefsEncryption encryption = default)
             {
-                return UnityEngine.PlayerPrefs.GetString(key, defaultValue);
+                return NiPrefs.Internal.GetString(key, defaultValue, encryption);
             }
         
-            public void Set(string key, string value)
+            public void Set(string key, string value, PlayerPrefsEncryption encryption = default)
             {
-                UnityEngine.PlayerPrefs.SetString(key, value);
+                NiPrefs.Internal.SetString(key, value, encryption);
             }
         }
     }

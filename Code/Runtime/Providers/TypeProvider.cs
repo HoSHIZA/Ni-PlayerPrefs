@@ -8,30 +8,32 @@ namespace NiGames.PlayerPrefs
         /// <summary>
         /// Returns the <see cref="Type"/> value stored in <c>PlayerPrefs</c> by key.
         /// </summary>
-        public static Type GetType(string key, Type defaultValue = default) => default(TypePlayerPrefsProvider).Get(key, defaultValue);
+        public static Type GetType(string key, Type defaultValue = default, PlayerPrefsEncryption encryption = default) 
+            => default(TypePlayerPrefsProvider).Get(key, defaultValue, encryption);
         
         /// <summary>
         /// Sets the value of <see cref="Type"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
-        public static void Set(string key, Type value) => default(TypePlayerPrefsProvider).Set(key, value);
+        public static void Set(string key, Type value, PlayerPrefsEncryption encryption = default) 
+            => default(TypePlayerPrefsProvider).Set(key, value, encryption);
     }
     
     namespace Providers
     {
         internal readonly struct TypePlayerPrefsProvider : IPlayerPrefsProvider<Type>
         {
-            public Type Get(string key, Type defaultValue = default)
+            public Type Get(string key, Type defaultValue = default, PlayerPrefsEncryption encryption = default)
             {
-                var typeName = UnityEngine.PlayerPrefs.GetString(key, null);
+                var typeName = NiPrefs.Internal.GetString(key, null, encryption);
                 
-                return typeName != null 
-                    ? Type.GetType(typeName) 
-                    : defaultValue;
+                if (typeName == null) return defaultValue;
+                
+                return Type.GetType(typeName);
             }
             
-            public void Set(string key, Type value)
+            public void Set(string key, Type value, PlayerPrefsEncryption encryption = default)
             {
-                UnityEngine.PlayerPrefs.SetString(key, value.AssemblyQualifiedName);
+                NiPrefs.Internal.SetString(key, value.AssemblyQualifiedName, encryption);
             }
         }
     }

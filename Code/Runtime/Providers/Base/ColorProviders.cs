@@ -10,25 +10,29 @@ namespace NiGames.PlayerPrefs
         /// Returns the <see cref="Color"/> value stored in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static Color GetColor(string key, Color defaultValue = default) => default(ColorPlayerPrefsProvider).Get(key, defaultValue);
+        public static Color GetColor(string key, Color defaultValue = default, PlayerPrefsEncryption encryption = default) 
+            => default(ColorPlayerPrefsProvider).Get(key, defaultValue, encryption);
         
         /// <summary>
         /// Sets the value of <see cref="Color"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static void Set(string key, Color value, bool writeAlpha = true) => new ColorPlayerPrefsProvider(writeAlpha).Set(key, value);
+        public static void Set(string key, Color value, bool writeAlpha = true, PlayerPrefsEncryption encryption = default) 
+            => new ColorPlayerPrefsProvider(writeAlpha).Set(key, value, encryption);
         
         /// <summary>
         /// Returns the <see cref="Color32"/> value stored in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static Color32 GetColor32(string key, Color32 defaultValue = default) => default(Color32PlayerPrefsProvider).Get(key, defaultValue);
+        public static Color32 GetColor32(string key, Color32 defaultValue = default, PlayerPrefsEncryption encryption = default) 
+            => default(Color32PlayerPrefsProvider).Get(key, defaultValue, encryption);
         
         /// <summary>
         /// Sets the value of <see cref="Color32"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static void Set(string key, Color32 value, bool writeAlpha = true) => new Color32PlayerPrefsProvider(writeAlpha).Set(key, value);
+        public static void Set(string key, Color32 value, bool writeAlpha = true, PlayerPrefsEncryption encryption = default) 
+            => new Color32PlayerPrefsProvider(writeAlpha).Set(key, value, encryption);
     }
     
     namespace Providers
@@ -42,9 +46,9 @@ namespace NiGames.PlayerPrefs
                 _writeAlpha = writeAlpha;
             }
             
-            public Color Get(string key, Color defaultValue = default)
+            public Color Get(string key, Color defaultValue = default, PlayerPrefsEncryption encryption = default)
             {
-                var pref = UnityEngine.PlayerPrefs.GetString(key, null);
+                var pref = NiPrefs.Internal.GetString(key, null, encryption);
                 
                 if (pref == null) return defaultValue;
 
@@ -58,13 +62,13 @@ namespace NiGames.PlayerPrefs
                     : defaultValue;
             }
             
-            public void Set(string key, Color value)
+            public void Set(string key, Color value, PlayerPrefsEncryption encryption = default)
             {
                 var hex = _writeAlpha 
                     ? ColorUtility.ToHtmlStringRGBA(value) 
                     : ColorUtility.ToHtmlStringRGB(value);
-    
-                UnityEngine.PlayerPrefs.SetString(key, $"#{hex}");
+                
+                NiPrefs.Internal.SetString(key, $"#{hex}", encryption);
             }
         }
         
@@ -77,9 +81,9 @@ namespace NiGames.PlayerPrefs
                 _writeAlpha = writeAlpha;
             }
             
-            public Color32 Get(string key, Color32 defaultValue = default)
+            public Color32 Get(string key, Color32 defaultValue = default, PlayerPrefsEncryption encryption = default)
             {
-                var pref = UnityEngine.PlayerPrefs.GetString(key, null);
+                var pref = NiPrefs.Internal.GetString(key, null, encryption);
                 
                 if (pref == null) return defaultValue;
 
@@ -93,13 +97,13 @@ namespace NiGames.PlayerPrefs
                     : defaultValue;
             }
             
-            public void Set(string key, Color32 value)
+            public void Set(string key, Color32 value, PlayerPrefsEncryption encryption = default)
             {
                 var hex = _writeAlpha 
                     ? ColorUtility.ToHtmlStringRGBA(value) 
                     : ColorUtility.ToHtmlStringRGB(value);
                 
-                UnityEngine.PlayerPrefs.SetString(key, $"#{hex}");
+                NiPrefs.Internal.SetString(key, $"#{hex}", encryption);
             }
         }
     }

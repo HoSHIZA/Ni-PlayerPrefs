@@ -1,25 +1,14 @@
-﻿using NiGames.PlayerPrefs.Providers;
+﻿using System.Runtime.CompilerServices;
+using NiGames.PlayerPrefs.Providers;
 using UnityEngine;
 
 namespace NiGames.PlayerPrefs
 {
     public static partial class NiPrefs
     {
-        private static bool _init;
-        
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-        private static void Init()
+        [MethodImpl(256)]
+        private static void Register()
         {
-#if UNITY_EDITOR
-            var domainReloadDisabled = 
-                UnityEditor.EditorSettings.enterPlayModeOptionsEnabled && 
-                (UnityEditor.EditorSettings.enterPlayModeOptions & UnityEditor.EnterPlayModeOptions.DisableDomainReload) != 0;
-            
-            if (_init && !domainReloadDisabled) return;
-#else
-            if (_init) return;
-#endif
-            
             RegisterProvider<string, StringPlayerPrefsProvider>();
             
             RegisterProvider<int, IntPlayerPrefsProvider>();
@@ -38,8 +27,6 @@ namespace NiGames.PlayerPrefs
             RegisterProvider<Quaternion, QuaternionPlayerPrefsProvider>();
             
             RegisterProvider<Resolution, ResolutionPlayerPrefsProvider>();
-            
-            _init = true;
         }
     }
 }

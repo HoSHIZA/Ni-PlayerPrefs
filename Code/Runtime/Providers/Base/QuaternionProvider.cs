@@ -12,13 +12,15 @@ namespace NiGames.PlayerPrefs
         /// Returns the <see cref="Quaternion"/> value stored in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static Quaternion GetQuaternion(string key, Quaternion defaultValue = default) => default(QuaternionPlayerPrefsProvider).Get(key, defaultValue);
+        public static Quaternion GetQuaternion(string key, Quaternion defaultValue = default, PlayerPrefsEncryption encryption = default) 
+            => default(QuaternionPlayerPrefsProvider).Get(key, defaultValue, encryption);
         
         /// <summary>
         /// Sets the value of <see cref="Quaternion"/> in <c>PlayerPrefs</c> by key.
         /// </summary>
         [MethodImpl(256)]
-        public static void Set(string key, Quaternion value) => default(QuaternionPlayerPrefsProvider).Set(key, value);
+        public static void Set(string key, Quaternion value, PlayerPrefsEncryption encryption = default) 
+            => default(QuaternionPlayerPrefsProvider).Set(key, value, encryption);
     }
     
     namespace Providers
@@ -28,20 +30,22 @@ namespace NiGames.PlayerPrefs
             public static readonly Regex Regex = new Regex(
                 pattern: @"^\(([0-9]+(?>[.][0-9]+)?),\s?([0-9]+(?>[.][0-9]+)?),\s?([0-9]+(?>[.][0-9]+)?),\s?([0-9]+(?>[.][0-9]+)?)\)$", 
                 options: RegexOptions.Compiled);
-
-
-            public Quaternion Get(string key, Quaternion defaultValue = default)
-            {
-                var input = UnityEngine.PlayerPrefs.GetString(key, defaultValue.ToString());
-                var match = Regex.Match(input);
             
+            public Quaternion Get(string key, Quaternion defaultValue = default, PlayerPrefsEncryption encryption = default)
+            {
+                var input = NiPrefs.Internal.GetString(key, null, encryption);
+                
+                if (input == null) return defaultValue;
+                
+                var match = Regex.Match(input);
+                
                 if (!match.Success)
                 {
-                    if (NiPrefs.EnableLogging)
+                    if (NiPrefs.Settings.EnableLogging)
                     {
                         Debug.LogWarning($"[NiPrefs] PlayerPrefs <color=yellow>\"{key}\"</color> value is incorrect <color=red>\"{input}\"</color>");
                     }
-                    return default;
+                    return defaultValue;
                 }
             
                 return new Quaternion(
@@ -51,9 +55,9 @@ namespace NiGames.PlayerPrefs
                     float.Parse(match.Groups[4].Value, CultureInfo.InvariantCulture.NumberFormat));
             }
 
-            public void Set(string key, Quaternion value)
+            public void Set(string key, Quaternion value, PlayerPrefsEncryption encryption = default)
             {
-                UnityEngine.PlayerPrefs.SetString(key, value.ToString("F3"));
+                NiPrefs.Internal.SetString(key, value.ToString("F3"), encryption);
             }
         }
     }
