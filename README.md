@@ -91,8 +91,8 @@ NiPrefs.SetJson<Player>("playerJson", new Player());
 NiPrefs.SetBinary<Player>("playerBinary", new Player());
 
 // Get Value
-Player playerJson = NiPrefs.GetJson<Player>("playerJson", null, throwIfError: true);
-Player playerBinary = NiPrefs.GetBinary<Player>("playerBinary", null, throwIfError: false);
+Player playerJson = NiPrefs.GetJson<Player>("playerJson", null);
+Player playerBinary = NiPrefs.GetBinary<Player>("playerBinary", null);
 ```
 
 ### Encryption
