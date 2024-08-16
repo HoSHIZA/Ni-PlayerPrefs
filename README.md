@@ -155,6 +155,11 @@ You can now use this shorthand for read or write a custom type value from Player
 NiPrefs.GetVector3("playerPosition", Vector3.zero);
 ```
 
+## TODO
+
+* Support for various encryption methods.
+* Combining `Get<T>`/`Set<T>` and `GetEnum`/`SetEnum`.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
