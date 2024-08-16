@@ -11,7 +11,7 @@ namespace NiGames.PlayerPrefs
             /// <summary>
             /// Gets the <c>int</c> value from an entry in PlayerPrefs, using the specified encryption settings.
             /// </summary>
-            public static int GetInt(string key, int defaultValue, PlayerPrefsEncryption encryption = default)
+            public static int GetInt(string key, int defaultValue, PlayerPrefsEncryption encryption)
             {
                 key = Encryption.GetEncodedKey(key, encryption);
                 
@@ -34,7 +34,7 @@ namespace NiGames.PlayerPrefs
             /// <summary>
             /// Gets the <c>float</c> value from an entry in PlayerPrefs, using the specified encryption settings.
             /// </summary>
-            public static float GetFloat(string key, float defaultValue, PlayerPrefsEncryption encryption = default)
+            public static float GetFloat(string key, float defaultValue, PlayerPrefsEncryption encryption)
             {
                 key = Encryption.GetEncodedKey(key, encryption);
                 
@@ -57,7 +57,7 @@ namespace NiGames.PlayerPrefs
             /// <summary>
             /// Gets the <c>string</c> value from an entry in PlayerPrefs, using the specified encryption settings.
             /// </summary>
-            public static string GetString(string key, string defaultValue, PlayerPrefsEncryption encryption = default)
+            public static string GetString(string key, string defaultValue, PlayerPrefsEncryption encryption)
             {
                 key = Encryption.GetEncodedKey(key, encryption);
                 
@@ -78,7 +78,7 @@ namespace NiGames.PlayerPrefs
             /// <summary>
             /// Sets the <c>int</c> value in PlayerPrefs using the specified encryption settings.
             /// </summary>
-            public static void SetInt(string key, int value, PlayerPrefsEncryption encryption = default)
+            public static void SetInt(string key, int value, PlayerPrefsEncryption encryption)
             {
                 key = Encryption.GetEncodedKey(key, encryption);
                 
@@ -99,7 +99,7 @@ namespace NiGames.PlayerPrefs
             /// <summary>
             /// Sets the <c>float</c> value in PlayerPrefs using the specified encryption settings.
             /// </summary>
-            public static void SetFloat(string key, float value, PlayerPrefsEncryption encryption = default)
+            public static void SetFloat(string key, float value, PlayerPrefsEncryption encryption)
             {
                 key = Encryption.GetEncodedKey(key, encryption);
                 
@@ -120,7 +120,7 @@ namespace NiGames.PlayerPrefs
             /// <summary>
             /// Sets the <c>string</c> value in PlayerPrefs using the specified encryption settings.
             /// </summary>
-            public static void SetString(string key, string value, PlayerPrefsEncryption encryption = default)
+            public static void SetString(string key, string value, PlayerPrefsEncryption encryption)
             {
                 key = Encryption.GetEncodedKey(key, encryption);
                 
