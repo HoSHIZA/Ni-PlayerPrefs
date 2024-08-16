@@ -1,15 +1,14 @@
-# NiPrefs: Improved Unity PlayerPrefs!
+# Ni-Prefs: Improved Unity PlayerPrefs!
 
-NiPrefs is a powerful and flexible wrapper for Unity's PlayerPrefs system, offering extended functionality and support for various data types. This library simplifies the process of storing and retrieving player preferences while providing a clean and extensible API.
+Ni-Prefs is a powerful and flexible wrapper for Unity's PlayerPrefs system, offering extended functionality and support for various data types. This library simplifies the process of storing and retrieving player preferences while providing a clean and extensible API.
 
 ## Features
 
-- Easy-to-use wrapper for Unity's PlayerPrefs
-- Support for primitive types (string, int, float, bool, Enum)
-- Support for unity types (Color, Vector, Quaternion, Resolution)
-- Encryption of keys and/or values.
-- Extensible architecture for custom data types
-- Type-safe operations with generics
+- Easy-to-use wrapper for Unity's PlayerPrefs.
+- Support for primitive types (`string`, `int`, `float`, `bool`, `Enum`).
+- Support for unity types (`Color`, `Vector`, `Quaternion`, `Resolution`).
+- Encryption of `keys` and/or `values`.
+- Extensible architecture for custom data types.
 
 ## Requirements
 
@@ -50,7 +49,7 @@ NiPrefs.Settings.EncryptValue = true;
 
 // Sets a new hash that is used for encryption.
 // When null or empty, `Unique Device Key` is used.
-NiPrefs.Settings.EncryptionHash = "hash"  
+NiPrefs.Settings.EncryptionHash = "hash";
 ```
 
 ## Usage
