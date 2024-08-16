@@ -31,6 +31,15 @@ Ni-Prefs is a powerful and flexible wrapper for Unity's PlayerPrefs system, offe
 https://github.com/HoSHIZA/Ni-PlayerPrefs.git
 ```
 
+### Manual with `manifest.json`
+
+1. Open `manifest.json`.
+2. Add the following line to the file:
+
+```
+"com.ni-games.ni_prefs" : "https://github.com/HoSHIZA/Ni-PlayerPrefs.git"
+```
+
 ## Setting
 
 It is possible to configure logging and enable encryption.
