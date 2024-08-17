@@ -13,12 +13,12 @@
         Ignore,
         
         /// <summary>
-        /// Performs an attempt to serialize/deserialize to/from json.
+        /// Attempt to serialize/deserialize to/from json.
         /// </summary>
         TryJson,
         
         /// <summary>
-        /// Performs an attempt to serialize/deserialize to/from binary.
+        /// Attempt to serialize/deserialize to/from binary.
         /// </summary>
         TryBinary,
     }
