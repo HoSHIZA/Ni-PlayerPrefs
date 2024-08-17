@@ -101,7 +101,7 @@ namespace NiGames.PlayerPrefs
         /// <summary>
         /// Parsing the PlayerPrefs entry type.
         /// </summary>
-        public static PlayerPrefsType ParseKeyType(string key)
+        public static PlayerPrefsType ParseEntryType(string key)
         {
             if (UnityEngine.PlayerPrefs.HasKey(key)) return PlayerPrefsType.Invalid;
             
