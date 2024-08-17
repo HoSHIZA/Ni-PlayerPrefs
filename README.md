@@ -103,6 +103,18 @@ Player playerJson = NiPrefs.GetJson<Player>("playerJson", null);
 Player playerBinary = NiPrefs.GetBinary<Player>("playerBinary", null);
 ```
 
+In some scenarios, you need to check the type of PlayerPrefs entry, this can be done using methods for type checking.
+
+```csharp
+// Returns an Enum `PlayerPrefsType` indicating the type of entry.
+// If there is an error while getting the value, `PlayerPrefsType.Invalid` is returned.
+NiPrefs.ParseEntryType("key");
+
+var isString = NiPrefs.IsString("key"); // True if entry is string.
+var isFloat = NiPrefs.IsFloat("key"); // True if entry is float.
+var isInt = NiPrefs.IsInt("key"); // True if entry is int.
+```
+
 ### Encryption
 
 The default settings from Settings are used for encryption, 
@@ -114,6 +126,8 @@ but this can be overridden for each new Get/Set by passing the desired
 NiPrefs allows you to extend its functionality to work with custom types by implementing the `IPlayerPrefsProvider<T>` interface.
 
 ```csharp
+using NiGames.PlayerPrefs;
+
 internal readonly struct Vector3Provider : IPlayerPrefsProvider<Vector3>
 {
     public Vector3 Get(string key, Vector3 defaultValue = default, PlayerPrefsEncryption encryption = default)
