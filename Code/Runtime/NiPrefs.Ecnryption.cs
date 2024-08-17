@@ -6,7 +6,7 @@ namespace NiGames.PlayerPrefs
 {
     public static partial class NiPrefs
     {
-        internal static class Encryption
+        public static class Encryption
         {
 #if UNITY_EDITOR
             private static readonly string _hash = "062e8911666e07d331ceb351d8d31faa";
@@ -17,7 +17,7 @@ namespace NiGames.PlayerPrefs
             public static string Hash => string.IsNullOrEmpty(Settings.EncryptionHash) ? _hash : Settings.EncryptionHash;
             
             [MethodImpl(256)]
-            public static string GetEncodedKey(string key, PlayerPrefsEncryption encryption)
+            internal static string GetEncodedKey(string key, PlayerPrefsEncryption encryption)
             {
                 if ((encryption is PlayerPrefsEncryption.UseEncryptionSettings && Settings.EncryptKey) || 
                     encryption is PlayerPrefsEncryption.WithEncryption ||
@@ -44,9 +44,9 @@ namespace NiGames.PlayerPrefs
                 return Convert.ToBase64String(result);
             }
             
-            public static string DecodeString(string encodedInput, string hash)
+            public static string DecodeString(string encoded, string hash)
             {
-                var inputBytes = Convert.FromBase64String(encodedInput);
+                var inputBytes = Convert.FromBase64String(encoded);
                 var hashBytes = Encoding.UTF8.GetBytes(hash);
 
                 var result = new byte[inputBytes.Length];

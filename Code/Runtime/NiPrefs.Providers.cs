@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using NiGames.PlayerPrefs.Providers;
 using UnityEngine;
 
@@ -6,8 +8,31 @@ namespace NiGames.PlayerPrefs
 {
     public static partial class NiPrefs
     {
+        private static readonly Dictionary<Type, IPlayerPrefsProvider> _providers = new Dictionary<Type, IPlayerPrefsProvider>(16);
+        
+        /// <summary>
+        /// Adds a new provider for a specific type to the list of available PlayerPrefs providers.
+        /// </summary>
+        public static void RegisterProvider<T>(IPlayerPrefsProvider<T> provider)
+        {
+            if (_providers.ContainsKey(typeof(T))) return;
+            
+            _providers.Add(typeof(T), provider);
+        }
+        
+        /// <summary>
+        /// Adds a new provider for a specific type to the list of available PlayerPrefs providers.
+        /// </summary>
+        public static void RegisterProvider<TKey, T>()
+            where T : IPlayerPrefsProvider<TKey>
+        {
+            if (_providers.ContainsKey(typeof(TKey))) return;
+            
+            _providers.Add(typeof(TKey), Activator.CreateInstance<T>());
+        }
+        
         [MethodImpl(256)]
-        private static void Register()
+        private static void RegisterBuiltInProviders()
         {
             RegisterProvider<string, StringPlayerPrefsProvider>();
             

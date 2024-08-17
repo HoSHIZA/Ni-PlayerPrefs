@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using UnityEngine;
 
@@ -12,7 +11,6 @@ namespace NiGames.PlayerPrefs
     public static partial class NiPrefs
     {
         private static bool _init;
-        private static readonly Dictionary<Type, IPlayerPrefsProvider> _providers = new Dictionary<Type, IPlayerPrefsProvider>(16);
         
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
         private static void Init()
@@ -27,30 +25,9 @@ namespace NiGames.PlayerPrefs
             if (_init) return;
 #endif
 
-            Register();
+            RegisterBuiltInProviders();
             
             _init = true;
-        }
-        
-        /// <summary>
-        /// Adds a new provider for a specific type to the list of available PlayerPrefs providers.
-        /// </summary>
-        public static void RegisterProvider<T>(IPlayerPrefsProvider<T> provider)
-        {
-            if (_providers.ContainsKey(typeof(T))) return;
-            
-            _providers.Add(typeof(T), provider);
-        }
-        
-        /// <summary>
-        /// Adds a new provider for a specific type to the list of available PlayerPrefs providers.
-        /// </summary>
-        public static void RegisterProvider<TKey, T>()
-            where T : IPlayerPrefsProvider<TKey>
-        {
-            if (_providers.ContainsKey(typeof(TKey))) return;
-            
-            _providers.Add(typeof(TKey), Activator.CreateInstance<T>());
         }
         
         /// <summary>
@@ -121,6 +98,53 @@ namespace NiGames.PlayerPrefs
             }
         }
         
+        /// <summary>
+        /// Parsing the PlayerPrefs entry type.
+        /// </summary>
+        public static PlayerPrefsType ParseKeyType(string key)
+        {
+            if (UnityEngine.PlayerPrefs.HasKey(key)) return PlayerPrefsType.Invalid;
+            
+            if (IsString(key, false))  return PlayerPrefsType.String;
+            if (IsFloat(key, false))   return PlayerPrefsType.Float;
+            if (IsInt(key, false))     return PlayerPrefsType.Int;
+            
+            return PlayerPrefsType.Invalid;
+        }
+
+        /// <summary>
+        /// Checks the type of PlayerPrefs entry.
+        /// </summary>
+        public static bool IsString(string key, bool checkKeyExists = true)
+        {
+            return (!checkKeyExists || UnityEngine.PlayerPrefs.HasKey(key)) && !(
+                UnityEngine.PlayerPrefs.GetString(key, defaultValue: null) == null &&
+                UnityEngine.PlayerPrefs.GetString(key, defaultValue: string.Empty) == string.Empty
+            );
+        }
+
+        /// <summary>
+        /// Checks the type of PlayerPrefs entry.
+        /// </summary>
+        public static bool IsFloat(string key, bool checkKeyExists = true)
+        {
+            return (!checkKeyExists || UnityEngine.PlayerPrefs.HasKey(key)) && !(
+                Mathf.Approximately(UnityEngine.PlayerPrefs.GetFloat(key, defaultValue: -1f), -1f) &&
+                Mathf.Approximately(UnityEngine.PlayerPrefs.GetFloat(key, defaultValue: 1f), 1f)
+            );
+        }
+
+        /// <summary>
+        /// Checks the type of PlayerPrefs entry.
+        /// </summary>
+        public static bool IsInt(string key, bool checkKeyExists = true)
+        {
+            return (!checkKeyExists || UnityEngine.PlayerPrefs.HasKey(key)) && !(
+                UnityEngine.PlayerPrefs.GetInt(key, defaultValue: -1) == -1 &&
+                UnityEngine.PlayerPrefs.GetInt(key, defaultValue: 1) == 1
+            );
+        }
+
         /// <inheritdoc cref="UnityEngine.PlayerPrefs.Save"/>
         public static void Save()
         {
